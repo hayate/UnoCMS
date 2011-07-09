@@ -36,7 +36,7 @@
   <div class="span-2">&nbsp;</div>
 
   <div class="mybox span-11 last">
-    <h3><a href=""><?php echo _('Modules') ?></a></h3>
+    <h3><a href="/admin/modules"><?php echo _('Modules') ?></a></h3>
     <div class="in">
       <p>
         <?php echo _('Enable and Disable Modules from this sections.') ?><br />
