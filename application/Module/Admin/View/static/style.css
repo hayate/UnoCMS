@@ -1,3 +1,6 @@
+a {
+    text-decoration:none;
+}
 h1.logo {
     text-shadow: #d4d4d4 2px 2px 1px;
     margin-top:10px;
@@ -5,7 +8,6 @@ h1.logo {
     font-family:courier;
 }
 h1.logo a {
-    text-decoration:none;
     color:#333;
 }
 #menubar {
@@ -51,9 +53,9 @@ h1.logo a {
     border-radius: 5px 5px 5px 5px;
     border: 1px solid #dfdfdf;
     margin-bottom:1.5em;
-    -moz-box-shadow: 5px 5px 5px #ccc;
-    -webkit-box-shadow: 5px 5px 5px #ccc;
-    box-shadow: 3px 3px 5px #ccc;
+    -moz-box-shadow: 1px 1px 4px #ccc;
+    -webkit-box-shadow: 1px 1px 4px #ccc;
+    box-shadow: 1px 1px 4px #ccc;
 }
 .mybox h3 {
     background: transparent url('/admin/index/resource/boxtop.png') repeat-x;

@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Page;
+namespace Module\Page;
 
 class Page extends \UnoCMS\Module
 {
@@ -40,6 +40,36 @@ class Page extends \UnoCMS\Module
     public function install()
     {
         $db = \Database::getInstance();
-        $query = 'CREATE TABLE IF NOT EXISTS pages ';
+        $query = 'CREATE TABLE IF NOT EXISTS pages ('.
+            'id bigint unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,'.
+            'title VARCHAR(255) NOT NULL,'.
+            'content TEXT,'.
+            'publish BIGINT UNSIGNED NOT NULL DEFAULT 0,'.
+            'expire BIGINT UNSIGNED NOT NULL DEFAULT 0,'.
+            'created BIGINT UNSIGNED,'.
+            'updated BIGINT UNSIGNED)';
+        try {
+            $stm = $db->prepare($query);
+            $stm->execute();
+            return TRUE;
+        }
+        catch (\Exception $ex)
+        {
+            \Uno\Log::error($ex);
+        }
+        return FALSE;
+    }
+
+    public function uninstall()
+    {
+        try {
+            \Database::getInstance()->exec('DROP table pages');
+            return TRUE;
+        }
+        catch (\Exception $ex)
+        {
+            \Uno\Log::error($ex);
+        }
+        return FALSE;
     }
 }

@@ -65,7 +65,7 @@ abstract class Module
      */
     public function install()
     {
-        return FALSE;
+        return TRUE;
     }
 
     /**
@@ -75,7 +75,7 @@ abstract class Module
      */
     public function uninstall()
     {
-        return FALSE;
+        return TRUE;
     }
 
     /**
@@ -85,7 +85,7 @@ abstract class Module
      */
     public function update()
     {
-        return FALSE;
+        return TRUE;
     }
 
     /**

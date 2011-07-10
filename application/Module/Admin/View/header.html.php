@@ -8,13 +8,17 @@
 
     <div class="span-24">
       <ul>
-        <li><a href=""><?php echo _('Menus') ?></a></li>
-        <li><a class="" href=""><?php echo _('Layouts') ?></a></li>
-        <li><a class="" href=""><?php echo _('Widgets') ?></a></li>
-        <li><a href=""><?php echo _('Modules') ?></a></li>
+        <?php foreach ($topmenu as $menu) { ?>
+        <li>
+          <a class="<?php echo $menu['active'] ? 'active' : '' ?>" href="<?php echo $menu['link'] ?>"><?php echo $menu['name'] ?></a>
+        </li>
+        <?php } ?>
       </ul>
     </div>
 
   </div>
+</div>
+<div class="container">
+  <?php echo $this->merge('status') ?>
 </div>
 
