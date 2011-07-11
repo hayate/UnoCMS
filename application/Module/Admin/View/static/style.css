@@ -74,3 +74,41 @@ h1.logo a {
 .mybox .in p {
     margin:0;
 }
+.mybox ul {
+    margin-bottom:0;
+    margin-right:0;
+    list-style:none;
+    padding-left:0;
+}
+.mybox ul li {
+    line-height:1.8em;
+}
+fieldset {
+    background: #f7f7f7;
+}
+fieldset p {
+    margin-bottom:0.2em;
+}
+input[type="text"], input[type="password"],
+input[type="url"], input[type="email"],
+input.text, input.title, textarea, select {
+    margin-top:0;
+}
+.button {
+    background: -moz-linear-gradient(center top , #A5B8DA 0%, #7089B3 100%) repeat scroll 0 0 transparent;
+    border: 1px solid #5C6F91;
+    border-radius: 10px 10px 10px 10px;
+    box-shadow: 0 1px 0 0 #AEC3E5 inset;
+    color: #FFFFFF;
+    cursor: pointer;
+    float: right;
+    font-weight: bold;
+    line-height: 1;
+    margin: 0.5em 1.8em;
+    padding: 5px 9px;
+    text-align: center;
+    text-shadow: 0 -1px 1px #64799E;
+}
+.button:hover {
+    background: #848FB2;
+}

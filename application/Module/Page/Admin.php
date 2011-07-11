@@ -23,10 +23,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace Module\Page\Controller;
+namespace Module\Page;
 
-class Admin extends \Controller
+class Admin
 {
+    public function home()
+    {
+
+    }
+
     /**
      * @menu Settings
      */

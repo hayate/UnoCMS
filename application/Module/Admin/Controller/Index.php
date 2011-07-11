@@ -3,6 +3,7 @@ namespace Module\Admin\Controller;
 
 use Module\Admin\Model\Module;
 use \Uno\Acl\Auth;
+use \Processor\Menu;
 
 
 class Index extends \Uno\Controller
@@ -21,14 +22,14 @@ class Index extends \Uno\Controller
             $this->redirect('/');
         }
         $this->session = \Uno\Session::getInstance();
-        $current = \URI::getInstance()->segment(-1);
+        $current = \URI::getInstance()->segment(2);
 
         $this->template->header = new \View('header');
         $topmenu = array(array('name' => _('Dashboard'),
                                'link' => '/admin',
-                               'active' => 'admin' == $current),
+                               'active' => '' == $current),
                          array('name' => _('Menus'),
-                               'link' => '',
+                               'link' => '/admin/menus',
                                'active' => 'menus' == $current),
                          array('name' => _('Layouts'),
                                'link' => '',
@@ -38,14 +39,74 @@ class Index extends \Uno\Controller
                                'active' => 'widgets' == $current),
                          array('name' => _('Modules'),
                                'link' => '/admin/modules',
-                               'active' => 'modules' == $current)
+                               'active' => strpos($current, 'module') !== FALSE)
             );
         $this->template->header->topmenu = $topmenu;
+        $this->template->jscript('/admin/index/resource/admin.js');
     }
 
     public function index($param = NULL)
     {
         $this->template->content = new \View('Index/index');
+    }
+
+    public function menus($action = NULL)
+    {
+        if ($this->isPost())
+        {
+            $pro = new Menu($this->post());
+            if (! $pro->process($action))
+            {
+                $this->session->set('error', $pro->errors());
+                $this->session->set('create', $this->post());
+                $this->refresh();
+            }
+            if ($pro->hasProperty('msg'))
+            {
+                $this->session->set('success', $pro->getProperty('msg'));
+            }
+            $this->redirect('admin/menus');
+        }
+        $this->template->content = new \View('Index/menus');
+        switch ($action)
+        {
+        case 'create':
+            $this->template->content->content = new \View('Index/menus/create');
+            $this->template->content->content->set($this->session->getOnce('create', array('name' => '',
+                                                                                           'description' => '')));
+            break;
+        default:
+            $this->template->content->content = new \View('Index/menus/list');
+            $this->template->content->content->menus = \ORM::factory('menus')->where('parent', 0)->findAll();
+        }
+    }
+
+    public function module($module, $action = NULL)
+    {
+        $mod = Module::factory($module);
+        if (! $mod->loaded() || !$mod->enabled)
+        {
+            $this->redirect('admin/modules');
+        }
+        $modclass = '\\Module\\'.$module.'\\'.$module;
+        $modobj = new $modclass();
+        if (0 == count($modobj->adminMenu()))
+        {
+            $this->redirect('admin/modules');
+        }
+        $this->template->content = new \View('Index/module');
+        $this->template->content->module = $modobj;
+
+        $adminclass = '\\Module\\'.$module.'\\Admin';
+        $adminobj = new $adminclass();
+        if ((NULL !== $action) && method_exists($adminobj, $action))
+        {
+            $this->template->content->content = $adminobj->$action();
+        }
+        else if (method_exists($adminobj, 'home'))
+        {
+            $this->template->content->content = $adminobj->home();
+        }
     }
 
     public function install($module)
@@ -85,13 +146,18 @@ class Index extends \Uno\Controller
             if ($mod->loaded())
             {
                 $mod->delete();
-                $classname = 'Module\\'.$module.'\\'.$module;
-                $obj = new $classname();
-                if ($obj->uninstall())
+                if (FALSE !== $this->get('clean', FALSE))
                 {
-                    $this->session->set('success', sprintf(_('Module "%s" uninstalled successfully.'), $module));
-                    $this->redirect('admin/modules');
+                    $classname = 'Module\\'.$module.'\\'.$module;
+                    $obj = new $classname();
+                    if ($obj->uninstall())
+                    {
+                        $this->session->set('success', sprintf(_('Module "%s" uninstalled successfully.'), $module));
+                        $this->redirect('admin/modules');
+                    }
                 }
+                $this->session->set('success', sprintf(_('Module "%s" uninstalled successfully.'), $module));
+                $this->redirect('admin/modules');
             }
         }
         catch (Exception $ex)
@@ -149,24 +215,31 @@ class Index extends \Uno\Controller
     public function modules()
     {
         $this->template->content = new \View('Index/modules');
-        $this->template->content->installed = Module::getInstance()->findAll();
 
         $names = Module::getInstance()->names();
         $uninstalled = array();
+        $installed = array();
 
         $modules = new \FilesystemIterator(APPPATH . 'Module/');
         foreach ($modules as $module)
         {
-            if ($module->isDir() && !in_array($module->getFilename(), $names))
+            if ($module->isDir())
             {
                 $filepath = $module->getPathname() .'/'.$module->getFilename().'.php';
                 if (is_file($filepath))
                 {
                     $classname = 'Module\\'.$module->getFilename().'\\'.$module->getFilename();
-                    $uninstalled[] = new $classname();
+                    if (in_array($module->getFilename(), $names))
+                    {
+                        $installed[] = array(new $classname(), Module::factory($module->getFilename()));
+                    }
+                    else {
+                        $uninstalled[] = new $classname();
+                    }
                 }
             }
         }
         $this->template->content->uninstalled = $uninstalled;
+        $this->template->content->installed = $installed;
     }
 }

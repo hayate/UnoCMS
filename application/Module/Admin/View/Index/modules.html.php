@@ -10,6 +10,7 @@
             <th><?php echo _('Module') ?></th>
             <th><?php echo _('Version') ?></th>
             <th><?php echo _('Description') ?></th>
+            <th><?php echo _('Module Admin') ?></th>
             <th><?php echo _('Actions') ?></th>
           </tr>
         </thead>
@@ -18,6 +19,7 @@
             <th><?php echo _('Module') ?></th>
             <th><?php echo _('Version') ?></th>
             <th><?php echo _('Description') ?></th>
+            <th><?php echo _('Module Admin') ?></th>
             <th><?php echo _('Actions') ?></th>
           </tr>
         </tfoot>
@@ -25,17 +27,22 @@
           <?php foreach ($installed as $m) { ?>
           <tr>
             <td>
-              <?php echo $m->name ?>
+              <?php echo $m[0]->name() ?>
             </td>
-            <td><?php echo $m->version ?></td>
-            <td><?php echo $m->description ?></td>
+            <td><?php echo $m[0]->version() ?></td>
+            <td><?php echo $m[0]->description() ?></td>
+            <td>
+              <?php if (count($m[0]->adminMenu()) && $m[1]->enabled) { ?>
+              <a href='/admin/module/<?php echo $m[0]->name() ?>'><?php echo $m[0]->name() ?> <?php echo _('Admin') ?></a>
+              <?php } else { ?>&nbsp;<?php } ?>
+            </td>
             <td>
               <p>
-                <a href="/admin/uninstall/<?php echo $m->name ?>"><?php echo _('Uninstall') ?></a> |
-                <?php if ($m->enabled) { ?>
-                <a href="/admin/deactivate/<?php echo $m->name ?>"><?php echo _('Deactivate') ?></a>
+                <a class="uninstall" href='/admin/uninstall/<?php echo $m[0]->name() ?>'><?php echo _('Uninstall') ?></a> |
+                <?php if ($m[1]->enabled) { ?>
+                <a href="/admin/deactivate/<?php echo $m[0]->name() ?>"><?php echo _('Deactivate') ?></a>
                 <?php } else { ?>
-                <a href="/admin/activate/<?php echo $m->name ?>"><?php echo _('Activate') ?></a>
+                <a href="/admin/activate/<?php echo $m[0]->name() ?>"><?php echo _('Activate') ?></a>
                 <?php } ?>
               </p>
             </td>

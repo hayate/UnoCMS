@@ -95,10 +95,10 @@ abstract class Module
     {
         $menu = array();
         $module = $this->name();
-        $filepath = APPPATH . 'Module/'.$module .'/Controller/Admin.php';
+        $filepath = APPPATH . 'Module/'.$module .'/Admin.php';
         if (is_file($filepath))
         {
-            $classname = 'Module\\'.$module.'\\Controller\\Admin';
+            $classname = 'Module\\'.$module.'\\Admin';
             $ref = new \ReflectionClass($classname);
             $methods = $ref->getMethods(\ReflectionMethod::IS_PUBLIC);
             foreach ($methods as $method)
@@ -106,7 +106,7 @@ abstract class Module
                 // if it does not start with underscore
                 if (substr($method->getName(), 0, 1) != '_')
                 {
-                    $menu[$this->getMenuName($method)] = strtolower($module).'/admin/'.$method->getName();
+                    $menu[$this->getMenuName($method)] = $method->getName();
                 }
             }
         }
